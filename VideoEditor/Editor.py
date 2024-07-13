@@ -34,6 +34,10 @@ class Editor:
         self.axis_line_color_entry.insert(0, self.default_axis_line_color)
         self.quality_scale.set(self.default_quality)
 
+        # Variables for zooming
+        self.zoom_level = 1.0
+        self.zoom_step = 0.1
+
     def save_project(self):
         # Get input values
         functions_text = self.functions_entry.get().split("\n") if self.functions_entry.get() else self.default_functions
@@ -190,6 +194,26 @@ class Editor:
         self.preview_label = tk.Label(self.video_frame, text="Video Playback", font=("Helvetica", 14), fg="white", bg="black")
         self.preview_label.pack(pady=10, expand=True)
 
+        # Bind zooming events
+        self.root.bind("<Control-plus>", self.zoom_in)
+        self.root.bind("<Control-minus>", self.zoom_out)
+
+    def handle_resize(self, event):
+        self.canvas.delete("axis_lines")  # Delete existing axis lines
+        canvas_width = event.width
+        canvas_height = event.height
+
+            # Redraw X-axis
+        self.canvas.create_line(0, canvas_height / 2, canvas_width, canvas_height / 2,
+                                    fill=self.axis_line_color_entry.get(), width=2, tags="axis_lines")
+
+            # Redraw Y-axis
+        self.canvas.create_line(canvas_width / 2, 0, canvas_width / 2, canvas_height,
+                                    fill=self.axis_line_color_entry.get(), width=2, tags="axis_lines")
+
+        # Bind the resize handler to the canvas
+        self.canvas.bind("<Control-minus>", self.handle_resize)
+
     def open_new_file(self):
         # Placeholder for opening a new file
         pass
@@ -217,26 +241,26 @@ class Editor:
         axis_line_color = self.axis_line_color_entry.get() if self.axis_line_color_entry.get() else self.default_axis_line_color
 
         # Create canvas for animation
-        canvas = tk.Canvas(self.video_frame, width=canvas_width, height=canvas_height, bg=bg_color)
-        canvas.pack(fill=tk.BOTH, expand=True)
+        self.canvas = tk.Canvas(self.video_frame, width=canvas_width, height=canvas_height, bg=bg_color)
+        self.canvas.pack(fill=tk.BOTH, expand=True)
 
         # Draw axis lines
-        canvas.create_line(0, canvas_height / 2, canvas_width, canvas_height / 2, fill=axis_line_color,
+        self.canvas.create_line(0, canvas_height / 2, canvas_width, canvas_height / 2, fill=axis_line_color,
                            width=2)  # X-axis
-        canvas.create_line(canvas_width / 2, 0, canvas_width / 2, canvas_height, fill=axis_line_color,
+        self.canvas.create_line(canvas_width / 2, 0, canvas_width / 2, canvas_height, fill=axis_line_color,
                            width=2)  # Y-axis
 
         # Draw tick marks on the axes if enabled
         if show_tick_marks:
             for x in range(-10 * tick_spacing, 11 * tick_spacing, tick_spacing):
                 x_pixel = x * 20 + canvas_width / 2
-                canvas.create_line(x_pixel, canvas_height / 2 - 5, x_pixel, canvas_height / 2 + 5, fill=tick_mark_color)
-                canvas.create_text(x_pixel, canvas_height / 2 + 10, text=str(x), anchor=tk.N)
+                self.canvas.create_line(x_pixel, canvas_height / 2 - 5, x_pixel, canvas_height / 2 + 5, fill=tick_mark_color)
+                self.canvas.create_text(x_pixel, canvas_height / 2 + 10, text=str(x), anchor=tk.N)
 
             for y in range(-10 * tick_spacing, 11 * tick_spacing, tick_spacing):
                 y_pixel = -y * 20 + canvas_height / 2
-                canvas.create_line(canvas_width / 2 - 5, y_pixel, canvas_width / 2 + 5, y_pixel, fill=tick_mark_color)
-                canvas.create_text(canvas_width / 2 - 20, y_pixel, text=str(y), anchor=tk.E)
+                self.canvas.create_line(canvas_width / 2 - 5, y_pixel, canvas_width / 2 + 5, y_pixel, fill=tick_mark_color)
+                self.canvas.create_text(canvas_width / 2 - 20, y_pixel, text=str(y), anchor=tk.E)
 
         # Draw graph animation for each function
         for idx, function_text in enumerate(functions_text):
@@ -249,7 +273,7 @@ class Editor:
                     x_normalized = x / tick_spacing
                     # Evaluate function
                     function_text = function_text.replace("y = ", "")
-                    y = eval(function_text.replace("x", str(x_normalized)))
+                    y = eval(function_text.replace("x", str(x_normalized))) * tick_spacing
                     points.append((x * 20 + canvas_width / 2, -y * 20 + canvas_height / 2))
 
                 # Calculate the delay between plotting each point
@@ -260,7 +284,7 @@ class Editor:
                     for i in range(len(points) - 1):
                         p1 = points[i]
                         p2 = points[i + 1]
-                        canvas.create_line(p1, p2, fill=graph_color, width=2, smooth=True, splinesteps=10)
+                        self.canvas.create_line(p1, p2, fill=graph_color, width=2, smooth=True, splinesteps=10)
                         self.root.update()
                         time.sleep(point_delay)
             except Exception as e:
@@ -271,11 +295,30 @@ class Editor:
         for widget in self.video_frame.winfo_children():
             widget.destroy()
 
+    def zoom_in(self, event):
+        self.zoom_level += self.zoom_step
+        self.apply_zoom()
+
+    def zoom_out(self, event):
+        self.zoom_level = max(self.zoom_step, self.zoom_level - self.zoom_step)
+        self.apply_zoom()
+
+    def apply_zoom(self):
+        # Get the center of the canvas
+        canvas_width = self.canvas.winfo_width()
+        canvas_height = self.canvas.winfo_height()
+        center_x = canvas_width / 2
+        center_y = canvas_height / 2
+
+        # Scale all items on the canvas from the center point
+        self.canvas.scale("all", center_x, center_y, self.zoom_level, self.zoom_level)
+
+        # Optionally, you can update the scroll region if you have scrollbars
+        self.canvas.configure(scrollregion=self.canvas.bbox("all"))
+
     def run(self):
         self.root.mainloop()
 
 # Example usage
 def return_to_loader_callback():
     print("Returning to loader...")
-
-

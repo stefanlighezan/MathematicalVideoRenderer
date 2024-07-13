@@ -1,0 +1,9 @@
+function_text=y = x
+graph_color=white
+bg_color=black
+tick_spacing=10
+quality=100000
+animation_speed=0.0001
+show_tick_marks=True
+tick_mark_color=white
+axis_line_color=white
