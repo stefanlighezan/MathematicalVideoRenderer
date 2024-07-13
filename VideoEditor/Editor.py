@@ -3,7 +3,6 @@ from tkinter import Menu, simpledialog, colorchooser
 import time
 import sympy as sp
 
-
 class Editor:
     def __init__(self, project_directory, return_to_loader_callback):
         self.quality_scale = 100
@@ -96,71 +95,68 @@ class Editor:
         main_frame.pack(fill=tk.BOTH, expand=True)
 
         inspector_width = int(self.root.winfo_screenwidth() * 0.3)
-        self.inspector_frame = tk.Frame(main_frame, width=inspector_width, bg="lightgray")
+        self.inspector_frame = tk.Frame(main_frame, width=inspector_width, bg="#1e1e1e")  # Dark gray background
         self.inspector_frame.pack(side=tk.LEFT, fill=tk.Y, expand=False)
         self.inspector_frame.pack_propagate(False)
 
-        inspector_label = tk.Label(self.inspector_frame, text="Inspector", font=("Helvetica", 14))
+        inspector_label = tk.Label(self.inspector_frame, text="Inspector", font=("Helvetica", 14), fg="white", bg="#1e1e1e")
         inspector_label.pack(pady=10)
 
-        functions_label = tk.Label(self.inspector_frame, text="Functions (one per line, e.g., y = x):")
+        functions_label = tk.Label(self.inspector_frame, text="Functions (one per line, e.g., y = x):", fg="white", bg="#1e1e1e")
         functions_label.pack(pady=5)
-        self.functions_entry = tk.Text(self.inspector_frame, height=5)
+        self.functions_entry = tk.Text(self.inspector_frame, height=5, bg="#2d2d2d", fg="white")  # Darker background
         self.functions_entry.pack(pady=5)
 
-        graph_colors_label = tk.Label(self.inspector_frame, text="Graph Colors (one per line):")
+        graph_colors_label = tk.Label(self.inspector_frame, text="Graph Colors (one per line):", fg="white", bg="#1e1e1e")
         graph_colors_label.pack(pady=5)
-        self.graph_colors_entry = tk.Text(self.inspector_frame, height=5)
+        self.graph_colors_entry = tk.Text(self.inspector_frame, height=5, bg="#2d2d2d", fg="white")  # Darker background
         self.graph_colors_entry.pack(pady=5)
 
-        bg_color_label = tk.Label(self.inspector_frame, text="Background Color:")
+        bg_color_label = tk.Label(self.inspector_frame, text="Background Color:", fg="white", bg="#1e1e1e")
         bg_color_label.pack(pady=5)
-        self.bg_color_entry = tk.Entry(self.inspector_frame)
+        self.bg_color_entry = tk.Entry(self.inspector_frame, bg="#2d2d2d", fg="white")  # Darker background
         self.bg_color_entry.pack(pady=5)
 
-        tick_spacing_label = tk.Label(self.inspector_frame, text="Tick Mark Spacing:")
+        tick_spacing_label = tk.Label(self.inspector_frame, text="Tick Mark Spacing:", fg="white", bg="#1e1e1e")
         tick_spacing_label.pack(pady=5)
-        self.tick_spacing_scale = tk.Scale(self.inspector_frame, from_=1, to=50, orient=tk.HORIZONTAL)
+        self.tick_spacing_scale = tk.Scale(self.inspector_frame, from_=1, to=50, orient=tk.HORIZONTAL, bg="#1e1e1e", fg="white", troughcolor="#1e1e1e")  # Darker background
         self.tick_spacing_scale.pack(pady=5)
 
-        quality_label = tk.Label(self.inspector_frame, text="Quality Of Graph:")
+        quality_label = tk.Label(self.inspector_frame, text="Quality Of Graph:", fg="white", bg="#1e1e1e")
         quality_label.pack(pady=5)
-        self.quality_scale = tk.Scale(self.inspector_frame, from_=1, to=100000, orient=tk.HORIZONTAL)
+        self.quality_scale = tk.Scale(self.inspector_frame, from_=1, to=100000, orient=tk.HORIZONTAL, bg="#1e1e1e", fg="white", troughcolor="#1e1e1e")  # Darker background
         self.quality_scale.pack(pady=5)
 
-        speed_label = tk.Label(self.inspector_frame, text="Animation Speed (seconds):")
+        speed_label = tk.Label(self.inspector_frame, text="Animation Speed (seconds):", fg="white", bg="#1e1e1e")
         speed_label.pack(pady=5)
-        self.speed_entry = tk.Entry(self.inspector_frame)
+        self.speed_entry = tk.Entry(self.inspector_frame, bg="#2d2d2d", fg="white")  # Darker background
         self.speed_entry.pack(pady=5)
 
         self.show_tick_marks_var = tk.BooleanVar()
-        show_tick_marks_check = tk.Checkbutton(self.inspector_frame, text="Show Tick Marks",
-                                               variable=self.show_tick_marks_var)
+        show_tick_marks_check = tk.Checkbutton(self.inspector_frame, text="Show Tick Marks", variable=self.show_tick_marks_var, fg="white", bg="#1e1e1e", selectcolor="#1e1e1e")
         show_tick_marks_check.pack(pady=5)
 
-        tick_mark_color_label = tk.Label(self.inspector_frame, text="Tick Mark Color:")
+        tick_mark_color_label = tk.Label(self.inspector_frame, text="Tick Mark Color:", fg="white", bg="#1e1e1e")
         tick_mark_color_label.pack(pady=5)
-        self.tick_mark_color_entry = tk.Entry(self.inspector_frame)
+        self.tick_mark_color_entry = tk.Entry(self.inspector_frame, bg="#2d2d2d", fg="white")  # Darker background
         self.tick_mark_color_entry.pack(pady=5)
 
-        axis_line_color_label = tk.Label(self.inspector_frame, text="Axis Line Color:")
+        axis_line_color_label = tk.Label(self.inspector_frame, text="Axis Line Color:", fg="white", bg="#1e1e1e")
         axis_line_color_label.pack(pady=5)
-        self.axis_line_color_entry = tk.Entry(self.inspector_frame)
+        self.axis_line_color_entry = tk.Entry(self.inspector_frame, bg="#2d2d2d", fg="white")  # Darker background
         self.axis_line_color_entry.pack(pady=5)
 
-        rerender_button = tk.Button(self.inspector_frame, text="Rerender", command=self.draw_graph_animation)
+        rerender_button = tk.Button(self.inspector_frame, text="Rerender", command=self.draw_graph_animation, bg="#2d2d2d", fg="white")  # Darker background
         rerender_button.pack(pady=10)
 
-        draw_graph_button = tk.Button(self.inspector_frame, text="Draw a graph animation",
-                                      command=self.draw_graph_animation)
+        draw_graph_button = tk.Button(self.inspector_frame, text="Draw a graph animation", command=self.draw_graph_animation, bg="#2d2d2d", fg="white")  # Darker background
         draw_graph_button.pack(pady=10)
 
         self.video_frame = tk.Frame(main_frame, bg="black")
         self.video_frame.pack(side=tk.RIGHT, fill=tk.BOTH, expand=True)
         self.video_frame.pack_propagate(False)
 
-        self.preview_label = tk.Label(self.video_frame, text="Video Playback", font=("Helvetica", 14), fg="white",
-                                      bg="black")
+        self.preview_label = tk.Label(self.video_frame, text="Video Playback", font=("Helvetica", 14), fg="white", bg="black")
         self.preview_label.pack(pady=10, expand=True)
 
         self.root.bind("<Control-plus>", self.zoom_in)
@@ -192,22 +188,18 @@ class Editor:
         self.canvas = tk.Canvas(self.video_frame, width=canvas_width, height=canvas_height, bg=bg_color)
         self.canvas.pack(fill=tk.BOTH, expand=True)
 
-        self.canvas.create_line(0, canvas_height / 2, canvas_width, canvas_height / 2, fill=axis_line_color,
-                                width=2)
-        self.canvas.create_line(canvas_width / 2, 0, canvas_width / 2, canvas_height, fill=axis_line_color,
-                                width=2)
+        self.canvas.create_line(0, canvas_height / 2, canvas_width, canvas_height / 2, fill=axis_line_color, width=2)
+        self.canvas.create_line(canvas_width / 2, 0, canvas_width / 2, canvas_height, fill=axis_line_color, width=2)
 
         if show_tick_marks:
             for x in range(-10 * tick_spacing, 11 * tick_spacing, tick_spacing):
                 x_pixel = x * 20 + canvas_width / 2
-                self.canvas.create_line(x_pixel, canvas_height / 2 - 5, x_pixel, canvas_height / 2 + 5,
-                                        fill=tick_mark_color)
+                self.canvas.create_line(x_pixel, canvas_height / 2 - 5, x_pixel, canvas_height / 2 + 5, fill=tick_mark_color)
                 self.canvas.create_text(x_pixel, canvas_height / 2 + 10, text=str(x), anchor=tk.N)
 
             for y in range(-10 * tick_spacing, 11 * tick_spacing, tick_spacing):
                 y_pixel = -y * 20 + canvas_height / 2
-                self.canvas.create_line(canvas_width / 2 - 5, y_pixel, canvas_width / 2 + 5, y_pixel,
-                                        fill=tick_mark_color)
+                self.canvas.create_line(canvas_width / 2 - 5, y_pixel, canvas_width / 2 + 5, y_pixel, fill=tick_mark_color)
                 self.canvas.create_text(canvas_width / 2 - 20, y_pixel, text=str(y), anchor=tk.E)
 
         for idx, function_text in enumerate(functions_text):
@@ -255,7 +247,6 @@ class Editor:
 
     def run(self):
         self.root.mainloop()
-
 
 # Example usage
 def return_to_loader_callback():
