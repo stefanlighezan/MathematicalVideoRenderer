@@ -3,6 +3,7 @@ import tkinter as tk
 from tkinter import Menu, simpledialog, colorchooser
 import time
 
+
 class Editor:
     def __init__(self, project_directory, return_to_loader_callback):
         self.root = tk.Tk()
@@ -40,8 +41,10 @@ class Editor:
 
     def save_project(self):
         # Get input values
-        functions_text = self.functions_entry.get().split("\n") if self.functions_entry.get() else self.default_functions
-        graph_colors = self.graph_colors_entry.get().split("\n") if self.graph_colors_entry.get() else self.default_graph_colors
+        functions_text = self.functions_entry.get().split(
+            "\n") if self.functions_entry.get() else self.default_functions
+        graph_colors = self.graph_colors_entry.get().split(
+            "\n") if self.graph_colors_entry.get() else self.default_graph_colors
         bg_color = self.bg_color_entry.get() if self.bg_color_entry.get() else self.default_bg_color
         tick_spacing = self.tick_spacing_scale.get()
         quality = self.quality_scale.get()
@@ -182,7 +185,8 @@ class Editor:
         rerender_button.pack(pady=10)
 
         # Inspector button for drawing graph animation
-        draw_graph_button = tk.Button(self.inspector_frame, text="Draw a graph animation", command=self.draw_graph_animation)
+        draw_graph_button = tk.Button(self.inspector_frame, text="Draw a graph animation",
+                                      command=self.draw_graph_animation)
         draw_graph_button.pack(pady=10)
 
         # Video playback frame (70% remaining space, right side)
@@ -191,7 +195,8 @@ class Editor:
         self.video_frame.pack_propagate(False)  # Prevent resizing based on contents
 
         # Placeholder labels for video playback
-        self.preview_label = tk.Label(self.video_frame, text="Video Playback", font=("Helvetica", 14), fg="white", bg="black")
+        self.preview_label = tk.Label(self.video_frame, text="Video Playback", font=("Helvetica", 14), fg="white",
+                                      bg="black")
         self.preview_label.pack(pady=10, expand=True)
 
         # Bind zooming events
@@ -203,13 +208,13 @@ class Editor:
         canvas_width = event.width
         canvas_height = event.height
 
-            # Redraw X-axis
+        # Redraw X-axis
         self.canvas.create_line(0, canvas_height / 2, canvas_width, canvas_height / 2,
-                                    fill=self.axis_line_color_entry.get(), width=2, tags="axis_lines")
+                                fill=self.axis_line_color_entry.get(), width=2, tags="axis_lines")
 
-            # Redraw Y-axis
+        # Redraw Y-axis
         self.canvas.create_line(canvas_width / 2, 0, canvas_width / 2, canvas_height,
-                                    fill=self.axis_line_color_entry.get(), width=2, tags="axis_lines")
+                                fill=self.axis_line_color_entry.get(), width=2, tags="axis_lines")
 
         # Bind the resize handler to the canvas
         self.canvas.bind("<Control-minus>", self.handle_resize)
@@ -246,20 +251,22 @@ class Editor:
 
         # Draw axis lines
         self.canvas.create_line(0, canvas_height / 2, canvas_width, canvas_height / 2, fill=axis_line_color,
-                           width=2)  # X-axis
+                                width=2)  # X-axis
         self.canvas.create_line(canvas_width / 2, 0, canvas_width / 2, canvas_height, fill=axis_line_color,
-                           width=2)  # Y-axis
+                                width=2)  # Y-axis
 
         # Draw tick marks on the axes if enabled
         if show_tick_marks:
             for x in range(-10 * tick_spacing, 11 * tick_spacing, tick_spacing):
                 x_pixel = x * 20 + canvas_width / 2
-                self.canvas.create_line(x_pixel, canvas_height / 2 - 5, x_pixel, canvas_height / 2 + 5, fill=tick_mark_color)
+                self.canvas.create_line(x_pixel, canvas_height / 2 - 5, x_pixel, canvas_height / 2 + 5,
+                                        fill=tick_mark_color)
                 self.canvas.create_text(x_pixel, canvas_height / 2 + 10, text=str(x), anchor=tk.N)
 
             for y in range(-10 * tick_spacing, 11 * tick_spacing, tick_spacing):
                 y_pixel = -y * 20 + canvas_height / 2
-                self.canvas.create_line(canvas_width / 2 - 5, y_pixel, canvas_width / 2 + 5, y_pixel, fill=tick_mark_color)
+                self.canvas.create_line(canvas_width / 2 - 5, y_pixel, canvas_width / 2 + 5, y_pixel,
+                                        fill=tick_mark_color)
                 self.canvas.create_text(canvas_width / 2 - 20, y_pixel, text=str(y), anchor=tk.E)
 
         # Draw graph animation for each function
@@ -319,6 +326,36 @@ class Editor:
     def run(self):
         self.root.mainloop()
 
+
 # Example usage
 def return_to_loader_callback():
     print("Returning to loader...")
+
+
+def sin(x):
+    return math.sin(x)
+
+
+def cos(x):
+    return math.cos(x)
+
+
+def tan(x):
+    return math.tan(x)
+
+
+def sqrt(x):
+    return math.sqrt(x)
+
+
+def asin(x):
+    return math.asin(x)
+
+
+def acos(x):
+    return math.acos(x)
+
+
+def atan(x):
+    return math.atan(x)
+

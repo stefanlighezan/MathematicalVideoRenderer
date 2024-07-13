@@ -1,5 +1,5 @@
 ﻿import tkinter as tk
-from tkinter import messagebox, simpledialog, Listbox, Scrollbar
+from tkinter import messagebox, simpledialog, ttk
 import os
 from VideoEditor.Editor import Editor
 
@@ -7,50 +7,43 @@ from VideoEditor.Editor import Editor
 class Loader:
     def __init__(self, root):
         self.root = root
+        self.root.title("Mathematical Video Editor")
+        self.root.geometry("1920x1080")
+        self.root.configure(background="#24292e")  # GitHub dark theme background
         self.setup_gui()
 
     def setup_gui(self):
-        self.root.title("Mathematical Video Editor")
-        self.root.geometry("1920x1080")
+        self.create_project_list_frame()
+        self.create_start_label_and_button()
+        self.bind_events()
 
-        # Create a frame to hold project list and scrollbar
-        frame = tk.Frame(self.root)
-        frame.pack(fill=tk.BOTH, expand=True, padx=20, pady=20)
+    def create_project_list_frame(self):
+        self.project_list_frame = ttk.Frame(self.root, style="ProjectListFrame.TFrame")
+        self.project_list_frame.pack(fill=tk.BOTH, expand=True, padx=50, pady=50)  # Increased padding
 
-        # Calculate the width for the project list (15% of the screen width)
-        screen_width = self.root.winfo_screenwidth()
-        listbox_width = int(screen_width * 0.15)
+        self.project_list_scrollbar = ttk.Scrollbar(self.project_list_frame, orient=tk.VERTICAL)
+        self.project_list_scrollbar.pack(side=tk.RIGHT, fill=tk.Y)
 
-        # Create scrollbar
-        scrollbar = Scrollbar(frame, orient=tk.VERTICAL, width=listbox_width)
-        scrollbar.pack(side=tk.RIGHT, fill=tk.Y)
-
-        # Create listbox for projects
-        self.project_listbox = Listbox(frame, yscrollcommand=scrollbar.set, font=("Helvetica", 12), width=listbox_width)
+        self.project_listbox = tk.Listbox(self.project_list_frame, yscrollcommand=self.project_list_scrollbar.set, font=("Helvetica", 18), width=40, background="#2f363d", foreground="#c9d1d9")  # GitHub dark theme colors
         self.project_listbox.pack(side=tk.LEFT, fill=tk.BOTH, expand=True)
 
-        # Configure scrollbar to work with listbox
-        scrollbar.config(command=self.project_listbox.yview)
+        self.project_list_scrollbar.config(command=self.project_listbox.yview)
 
-        # Populate project list
         self.populate_project_list()
 
-        # Bind double click event to open project in Editor
-        self.project_listbox.bind("<Double-Button-1>", self.open_project_in_editor)
+    def create_start_label_and_button(self):
+        self.start_label = ttk.Label(self.root, text="Welcome to Mathematical Video Editor", font=("Helvetica", 24), foreground="#c9d1d9", background="#24292e")  # GitHub dark theme colors
+        self.start_label.pack(pady=50)
 
-        # Bind fullscreen handling
+        self.create_project_button = ttk.Button(self.root, text="Create Project", command=self.create_project, style="CreateProjectButton.TButton")
+        self.create_project_button.pack(pady=20)  # Increased padding
+
+    def bind_events(self):
+        self.project_listbox.bind("<Double-Button-1>", self.open_project_in_editor)
         self.root.bind("<F11>", self.toggle_fullscreen)
         self.root.bind("<Escape>", self.exit_fullscreen)
 
-        # Example label and button for creating projects
-        start_label = tk.Label(self.root, text="Welcome to Mathematical Video Editor", font=("Helvetica", 20))
-        start_label.pack(pady=50)
-
-        create_project_button = tk.Button(self.root, text="Create Project", command=self.create_project)
-        create_project_button.pack()
-
     def populate_project_list(self):
-        # For demo purposes, populate the list with example projects
         projects_dir = os.path.join(os.path.dirname(__file__), "Projects")
         if not os.path.exists(projects_dir):
             os.makedirs(projects_dir)
@@ -86,7 +79,6 @@ class Loader:
         self.root.deiconify()  # Show the Loader window again
 
     def refresh_project_list(self):
-        # Clear and repopulate the project list
         self.project_listbox.delete(0, tk.END)
         self.populate_project_list()
 
@@ -99,5 +91,12 @@ class Loader:
 
 def create_instance():
     root = tk.Tk()
+    style = ttk.Style(root)
+    style.configure("ProjectListFrame.TFrame", background="#24292e")
+    style.configure("CreateProjectButton.TButton", font=("Helvetica", 18), foreground="#c9d1d9", background="#2f363d")
     app = Loader(root)
     root.mainloop()
+
+
+if __name__ == "__main__":
+    create_instance()
