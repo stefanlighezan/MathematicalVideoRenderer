@@ -1,3 +1,3 @@
-﻿from VideoEditor.Loader import *
+﻿from VideoEditor .Loader import *
 
 create_instance()

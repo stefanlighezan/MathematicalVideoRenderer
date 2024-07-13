@@ -1,7 +1,7 @@
 ﻿import tkinter as tk
 from tkinter import messagebox, simpledialog, Listbox, Scrollbar
 import os
-from VideoEditor.Editor import Editor  # Assuming Editor.py is in the same directory as Loader.py
+from VideoEditor.Editor import Editor
 
 
 class Loader:
@@ -11,8 +11,7 @@ class Loader:
 
     def setup_gui(self):
         self.root.title("Mathematical Video Editor")
-        self.root.geometry("800x600")
-        self.root.attributes("-fullscreen", True)
+        self.root.geometry("1920x1080")
 
         # Create a frame to hold project list and scrollbar
         frame = tk.Frame(self.root)
@@ -33,7 +32,7 @@ class Loader:
         # Configure scrollbar to work with listbox
         scrollbar.config(command=self.project_listbox.yview)
 
-        # Populate project list (for demo, you can fetch actual projects here)
+        # Populate project list
         self.populate_project_list()
 
         # Bind double click event to open project in Editor
@@ -80,7 +79,11 @@ class Loader:
             project_directory = os.path.join(os.path.dirname(__file__), "Projects", project_name)
             if os.path.exists(project_directory):
                 self.root.withdraw()  # Hide the Loader window
-                open_editor(project_directory)
+                editor = Editor(project_directory, self.return_to_loader)
+                editor.run()
+
+    def return_to_loader(self):
+        self.root.deiconify()  # Show the Loader window again
 
     def refresh_project_list(self):
         # Clear and repopulate the project list
@@ -92,11 +95,6 @@ class Loader:
 
     def exit_fullscreen(self, event=None):
         self.root.attributes("-fullscreen", False)
-
-
-def open_editor(project_directory):
-    editor_app = Editor(project_directory)
-    editor_app.run()
 
 
 def create_instance():
