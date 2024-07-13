@@ -1,5 +1,4 @@
 ﻿import tkinter as tk
-from tkinter import Menu, simpledialog, colorchooser
 import time
 import sympy as sp
 
@@ -27,8 +26,8 @@ class Editor:
         self.default_quality = 100
 
     def save_project(self):
-        functions_text = self.functions_entry.get().split("\n") if self.functions_entry.get() else self.default_functions
-        graph_colors = self.graph_colors_entry.get().split("\n") if self.graph_colors_entry.get() else self.default_graph_colors
+        functions_text = self.functions_entry.get("1.0", tk.END).split("\n") if self.functions_entry.get() else self.default_functions
+        graph_colors = self.graph_colors_entry.get("1.0", tk.END).split("\n") if self.graph_colors_entry.get() else self.default_graph_colors
         bg_color = self.bg_color_entry.get() if self.bg_color_entry.get() else self.default_bg_color
         tick_spacing = self.tick_spacing_scale.get()
         quality = self.quality_scale.get()
@@ -83,10 +82,10 @@ class Editor:
 
     def setup_gui(self):
         self.root.title("Mathematical Video Editor - Editor")
-        menu_bar = Menu(self.root)
+        menu_bar = tk.Menu(self.root)
         self.root.config(menu=menu_bar)
 
-        file_menu = Menu(menu_bar, tearoff=0)
+        file_menu = tk.Menu(menu_bar, tearoff=0)
         file_menu.add_command(label="Open New File", command=self.open_new_file)
         file_menu.add_command(label="Save", command=self.save_project)
         file_menu.add_command(label="Return to Loader", command=self.return_to_loader)
@@ -192,10 +191,8 @@ class Editor:
         self.canvas = tk.Canvas(self.video_frame, width=canvas_width, height=canvas_height, bg=bg_color)
         self.canvas.pack(fill=tk.BOTH, expand=True)
 
-        self.canvas.create_line(0, canvas_height / 2, canvas_width, canvas_height / 2, fill=axis_line_color,
-                                width=2)
-        self.canvas.create_line(canvas_width / 2, 0, canvas_width / 2, canvas_height, fill=axis_line_color,
-                                width=2)
+        self.canvas.create_line(0, canvas_height / 2, canvas_width, canvas_height / 2, fill=axis_line_color, width=2)
+        self.canvas.create_line(canvas_width / 2, 0, canvas_width / 2, canvas_height, fill=axis_line_color, width=2)
 
         if show_tick_marks:
             for x in range(-10 * tick_spacing, 11 * tick_spacing, tick_spacing):
@@ -217,10 +214,33 @@ class Editor:
                 points = []
                 x = sp.symbols('x')
                 expr = sp.sympify(function_text.replace("y = ", ""))
+
+
+                asymptotes = []
+                for i in range(-10 * tick_spacing, 11 * tick_spacing - 1):
+                    x_normalized = i / tick_spacing
+                    try:
+                        y = expr.evalf(subs={x: x_normalized}) * tick_spacing
+
+                        if y == float('inf') or y == float('-inf'):
+                            asymptotes.append(i)
+                    except (ZeroDivisionError, ValueError, TypeError) as e:
+                        print(f"Error evaluating function: {e}")
+                        continue
+
+
+                for asymptote in asymptotes:
+                    x_pixel = asymptote * 20 + canvas_width / 2
+                    self.canvas.create_line(x_pixel, 0, x_pixel, canvas_height, fill='red', dash=(4, 4))
+
+
                 for i in range(-10 * tick_spacing, 11 * tick_spacing):
                     x_normalized = i / tick_spacing
-                    y = expr.evalf(subs={x: x_normalized}) * tick_spacing
-                    points.append((i * 20 + canvas_width / 2, -y * 20 + canvas_height / 2))
+                    try:
+                        y = expr.evalf(subs={x: x_normalized}) * tick_spacing
+                        points.append((i * 20 + canvas_width / 2, -y * 20 + canvas_height / 2))
+                    except ZeroDivisionError:
+                        continue
 
                 if len(points) > 1:
                     point_delay = animation_speed / len(points)
@@ -256,7 +276,5 @@ class Editor:
     def run(self):
         self.root.mainloop()
 
-
-# Example usage
 def return_to_loader_callback():
     print("Returning to loader...")
